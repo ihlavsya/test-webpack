@@ -1,25 +1,25 @@
-module.exports = function override(config, env) {
-    config.module.rules.push({
-        test: /\.scss$/,
-        use: [
-          "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 1,
+const { override, addWebpackModuleRule, addWebpackResolve, addWebpackAlias } = require("customize-cra");
+const path = require('path')
+
+module.exports = {
+    webpack: override(
+        addWebpackResolve({
+            fallback: {
+                fs: false,
             },
-          },
-          {
-            loader: "sass-loader",
-            options: {
-              sassOptions: {
-                // support for importing json files in scss
-                // importer: jsonImporter(),
-              },
+        }),
+        addWebpackAlias({
+            '@': path.resolve(__dirname, 'src')
+        }),
+        addWebpackModuleRule(
+            {
+                test: [/\.css$/, /\.scss$/],
+                exclude: [/\.module\.(css|scss)/],
+                use: ['style-loader' ,
+                    "css-loader",
+                    "sass-loader"
+                ],
             },
-          },
-        ],
-        // include: [path.resolve(__dirname, "src")],
-      })
-    return config;
-  }
+        ),
+    ),
+}
